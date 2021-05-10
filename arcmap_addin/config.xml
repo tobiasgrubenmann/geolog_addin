@@ -1,0 +1,35 @@
+<ESRI.Configuration xmlns="http://schemas.esri.com/Desktop/AddIns">
+    <Name>Geolog</Name>
+    <AddInID>{78b6ad47-b7b3-4388-b96f-98273d9f1bb3}</AddInID>
+    <Description>Add-In for using Prolog in ArcMap</Description>
+    <Version>0.1</Version>
+    <Image />
+    <Author>Tobias Grubenmann</Author>
+    <Company>University of Bonn</Company>
+    <Date>May 10, 2021</Date>
+    <Targets>
+        <Target name="Desktop" version="10.3" />
+    </Targets>
+    <AddIn language="PYTHON" library="arcprolog.py" namespace="arcprolog">
+        <ArcMap>
+            <Commands>
+                <Button caption="Consult File" category="ArcProlog" class="ConsultButtonClass" id="arcprolog.consult_button" image="" message="" tip="">
+                    <Help heading="" />
+                </Button>
+                <Button caption="Query" category="ArcProlog" class="QueryButtonClass" id="arcprolog.query_button" image="" message="" tip="">
+                    <Help heading="" />
+                </Button>
+            </Commands>
+            <Extensions>
+            </Extensions>
+            <Toolbars>
+                <Toolbar caption="ArcProlog Toolbar" category="ArcProlog" id="arcprolog.toolbar" showInitially="true">
+                    <Items>
+                        <Button refID="arcprolog.consult_button" />
+                        <Button refID="arcprolog.query_button" separator="true" />
+                    </Items>
+                </Toolbar>
+            </Toolbars>
+        </ArcMap>
+    </AddIn>
+</ESRI.Configuration>
