@@ -13,11 +13,11 @@ for dir_name in os.listdir(os.path.join(os.path.dirname(__file__), os.pardir)):
 
 import geolog_core.interpreter
 
-tool_path = os.path.join(os.path.dirname(__file__), "arcmap_toolbox/ArcPrologToolbox.pyt")
+tool_path = os.path.join(os.path.dirname(__file__), "arcmap_toolbox/GeologToolbox.pyt")
 
 
 class ConsultButtonClass(object):
-    """Implementation for arcprolog.consult_button (Button)"""
+    """Implementation for geolog.consult_button (Button)"""
 
     def __init__(self):
         self.enabled = True
@@ -28,7 +28,7 @@ class ConsultButtonClass(object):
 
 
 class QueryButtonClass(object):
-    """Implementation for arcprolog.query_button (Button)"""
+    """Implementation for geolog.query_button (Button)"""
 
     def __init__(self):
         self.enabled = True
@@ -37,12 +37,12 @@ class QueryButtonClass(object):
     def onClick(self):
         pythonaddins.GPToolDialog(tool_path, "QueryTool")
 
-class ResetButtonClass(object):
-    """Implementation for arcprolog.reset_button (Button)"""
-
-    def __init__(self):
-        self.enabled = True
-        self.checked = False
-
-    def onClick(self):
-        geolog_core.interpreter.Interpreter().reset()
+# class ResetButtonClass(object):
+#     """Implementation for geolog.reset_button (Button)"""
+#
+#     def __init__(self):
+#         self.enabled = True
+#         self.checked = False
+#
+#     def onClick(self):
+#         geolog_core.interpreter.Interpreter().reset()

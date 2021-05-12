@@ -18,6 +18,6 @@ if __name__ == "__main__":
     #                                           "../../../../Prolog/AccidentAnalysis/setup.pl"))
     # test_interpreter.consult(file_name)
     try:
-        print(test_interpreter.query("arcpy_core:arcpy_ArcSDESQLExecute([\"C:/Users/Tobias/AppData/Roaming/ESRI/Desktop10.8/ArcCatalog/geolog.sde\"], Connection), arcpy_core:executeArcSDE(Connection, \"SELECT table2.osm_id FROM geolog.pois AS table1, geolog.buildings AS table2 WHERE table1.osm_id = '5433785266' AND ST_Intersects(table1.shape, table2.shape)\", Result)", debug=True))
+        print(test_interpreter.query("arcpy_core:'arcpy.ArcSDESQLExecute'([\"C:/Users/Tobias/AppData/Roaming/ESRI/Desktop10.8/ArcCatalog/geolog.sde\"], Connection), arcpy_util:executeArcSDE(Connection, \"SELECT table2.osm_id FROM geolog.pois AS table1, geolog.buildings AS table2 WHERE table1.osm_id = '5433785266' AND ST_Intersects(table1.shape, table2.shape)\", Result)", debug=True))
     except pyswip.prolog.PrologError as e:
         print("ERROR: {0}".format(str(e)))

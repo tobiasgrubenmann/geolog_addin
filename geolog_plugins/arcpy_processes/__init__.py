@@ -70,10 +70,10 @@ for (f, location) in function_set:
     # one additional argument for the return value
     min_arity = 1
     max_arity = 2
-    name = location.replace('.', '_') + "_" + f.func_name
+    name = "'" + location + "." + f.func_name + "'"
     # use ESRI toolname, if available
     if "__esri_toolname__" in f.func_dict:
-        name = location.replace('.', '_') + "_" + f.func_dict["__esri_toolname__"]
+        name = location + "." + f.func_dict["__esri_toolname__"]
     globals()[name] = type(name,
                            (geolog_core.predicate.DeterministicPredicate,), {
                                "__doc__": "Class to register foreign predicate for: ." + name,
@@ -94,7 +94,7 @@ for (f, location) in function_set:
 for (c, location) in class_set:
     min_arity = 2
     max_arity = 2
-    name = location.replace('.', '_') + "_" + c.__name__
+    name = location + "." + c.__name__
     globals()[name] = type(name,
                            (geolog_core.predicate.DeterministicPredicate,), {
                                "__doc__": "Class to register foreign predicate for: ." + name,

@@ -2,31 +2,31 @@
     <Name>Geolog</Name>
     <AddInID>{78b6ad47-b7b3-4388-b96f-98273d9f1bb3}</AddInID>
     <Description>Add-In for using Prolog in ArcMap</Description>
-    <Version>0.1</Version>
+    <Version>0.2-snapshot</Version>
     <Image />
     <Author>Tobias Grubenmann</Author>
     <Company>University of Bonn</Company>
-    <Date>May 10, 2021</Date>
+    <Date>May 12, 2021</Date>
     <Targets>
         <Target name="Desktop" version="10.3" />
     </Targets>
-    <AddIn language="PYTHON" library="arcprolog.py" namespace="arcprolog">
+    <AddIn language="PYTHON" library="geolog.py" namespace="geolog">
         <ArcMap>
             <Commands>
-                <Button caption="Consult File" category="ArcProlog" class="ConsultButtonClass" id="arcprolog.consult_button" image="" message="" tip="">
+                <Button caption="Consult File" category="Geolog" class="ConsultButtonClass" id="geolog.consult_button" image="" message="" tip="">
                     <Help heading="" />
                 </Button>
-                <Button caption="Query" category="ArcProlog" class="QueryButtonClass" id="arcprolog.query_button" image="" message="" tip="">
+                <Button caption="Query" category="Geolog" class="QueryButtonClass" id="geolog.query_button" image="" message="" tip="">
                     <Help heading="" />
                 </Button>
             </Commands>
             <Extensions>
             </Extensions>
             <Toolbars>
-                <Toolbar caption="ArcProlog Toolbar" category="ArcProlog" id="arcprolog.toolbar" showInitially="true">
+                <Toolbar caption="Geolog Toolbar" category="Geolog" id="geolog.toolbar" showInitially="true">
                     <Items>
-                        <Button refID="arcprolog.consult_button" />
-                        <Button refID="arcprolog.query_button" separator="true" />
+                        <Button refID="geolog.consult_button" />
+                        <Button refID="geolog.query_button" separator="true" />
                     </Items>
                 </Toolbar>
             </Toolbars>

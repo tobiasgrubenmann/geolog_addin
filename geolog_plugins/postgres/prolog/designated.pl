@@ -1,10 +1,7 @@
-:- module(designated, [designated_relation/1, relation_key/2, designated_feature_layer/1, designated_feature_class/1,
-    designated_feature/1, designate_name/1]).
+:- module(designated, []).
 
-:- multifile designated_relation/1.
 :- multifile relation_key/2.
-:- dynamic designated_relation/1.
-:- dynamic relation_key/2.  % GKW: Dieses Prädikat wird hier gar nicht verwendet! Wofür also?
+:- dynamic relation_key/2.
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Designated
@@ -16,7 +13,7 @@
 
 
 
-%% initialize_db_connection(+ConnectionFile, ?Mode) -- GKW: Extended & moved
+%% initialize_db_connection(+ConnectionFile, ?Mode)
 %
 % If ConnectionFile exists, open connection to database and 
 % unify Mode with 'run', else store dummy connection ID and 
@@ -24,7 +21,7 @@
 initialize_db_connection(ConnectionFile, Mode) :-
     retractall(db_connection(_)),
     ( exists_file(ConnectionFile)
-	-> ( arcpy_core:arcpy_ArcSDESQLExecute([ConnectionFile], Connection),
+	-> ( arcpy_core:'arcpy.ArcSDESQLExecute'([ConnectionFile], Connection),
 	     asserta(db_connection(Connection)),
 	     Mode = run
 	   )
@@ -53,7 +50,7 @@ initialize_db_connection(ConnectionFile, Mode) :-
 %designated_feature_class(FeatureClass) :-
 %    designated_relation(FeatureLayer),
 %    arcpy_util:feature_layer(FeatureLayer),
-%    arcpy_core:arcpy_Describe([FeatureLayer], Description),
+%    arcpy_core:'arcpy.Describe'([FeatureLayer], Description),
 %    geolog:get_attribute(Description, "featureClass", FeatureClassDescription),
 %    geolog:get_attribute(FeatureClassDescription, "name", FeatureClass).
 %

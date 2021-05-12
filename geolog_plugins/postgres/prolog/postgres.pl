@@ -1,8 +1,8 @@
-:- module(postgres, [within_distance/3, within_distance_relational/5, intersect/2, intersect_relational/4,
-                     minus_relational/3, project_id_relational/3, join_relational/6, join_relational/5,
-                     join_relational/4, iterate_relational/2, iterate_ids/2, iterate_ids_random/3,
-                     random_relation/3, filter_by_relationship/4,
-                     select_where_query/3, select_where_query_relational/3, materialize/2]).
+:- module(postgres, [within_distance/3, within_distance_relational/5, intersect/2,
+                     intersect_relational/4, minus_relational/3, project_id_relational/3,
+                     project_id_relational/3, join_relational/6, join_relational/5,
+                     filter_by_relationship/4, iterate_relational/2, iterate_ids/2,
+                     iterate_ids_random/3, random_relation/3, materialize/2]).
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Postgres
@@ -23,31 +23,20 @@
 
 within_distance((Relation1, Id1), (Relation2, Id2), Radius) :-
     % Check input
-    nonvar(Table1),   
+    nonvar(Relation1),
     nonvar(Id1),
-    nonvar(Table2),   % GKW: Test is always false: nonvar(Table1) -- Should be Relation2?
+    nonvar(Relation2),   % GKW: Test is always false: nonvar(Table1) -- Should be Relation2?
     nonvar(Id2),
     % Execute query
     designated:relation_key(Relation1, IDField1),
     designated:relation_key(Relation2, IDField2),
-	run_select_within(Radius,Table1,Table2,IDField1,Id1,IDField2,Id2).
-
-run_select_within(Radius,Table1,Table2,IDField1,Id1,IDField2,Id2) :-
-	make_select_within(Radius,Table1,Table2,IDField1,Id1,IDField2,Id2,Query),
-	arcpy_util:sql_query_result(Query, Result),
-    ( Result = true 
-    ; Result = 1
-    ),
-    !.
-    
-make_select_within(Radius,Table1,Table2,IDField1,Id1,IDField2,Id2,Query) :-
 	atomics_to_string([
         "SELECT ST_DWithin(table1.shape, table2.shape, ",
         Radius,
         ") FROM ",
-        Table1,
+        Relation1,
         " AS table1, ",
-        Table2,
+        Relation2,
         " AS table2 WHERE table1.",
         IDField1,
         " = '",
@@ -57,16 +46,18 @@ make_select_within(Radius,Table1,Table2,IDField1,Id1,IDField2,Id2,Query) :-
         " = '",
         Id2,
         "'"
-    ], Query).
-    
+    ], Query),
+	arcpy_util:sql_query_result(Query, Result),
+    ( Result = true
+    ; Result = 1
+    ),
+    !.
     
 within_distance((Relation1, Id1), (Relation2, Id2), Radius) :-
     % Check input
     nonvar(Relation1),
     nonvar(Id1),
     var(Id2),
-    % get table
-    (var(Relation2) -> designated:designated_relation(Relation2) ; true),
     % Execute query
     designated:relation_key(Relation1, IDField1),
     designated:relation_key(Relation2, IDField2),
@@ -100,9 +91,6 @@ within_distance((Relation1, Id1), (Relation2, Id2), Radius) :-
     % Check input
     var(Id1),
     var(Id2),
-    % get table
-    (var(Relation1) -> designated:designated_relation(Relation1) ; true),
-    (var(Relation2) -> designated:designated_relation(Relation2) ; true),
     % Execute query
     designated:relation_key(Relation1, IDField1),
     designated:relation_key(Relation2, IDField2),
@@ -218,15 +206,14 @@ intersect((Relation1, Id1), (Relation2, Id2)) :-
         "'"
     ], Query),
     arcpy_util:sql_query_result(Query, Result),
-    (Result = true ; Result = 1).
+    (Result = true ; Result = 1),
+    !.
 
 intersect((Relation1, Id1), (Relation2, Id2)) :-
     % Check input
     nonvar(Relation1),
     nonvar(Id1),
     var(Id2),
-    % get table
-    (var(Relation2) -> designated:designated_relation(Relation2) ; true),
     % Execute query
     designated:relation_key(Relation1, IDField1),
     designated:relation_key(Relation2, IDField2),
@@ -258,9 +245,6 @@ intersect((Relation1, Id1), (Relation2, Id2)) :-
     % Check input
     var(Id1),
     var(Id2),
-    % get table
-    (var(Relation1) -> designated:designated_relation(Relation1) ; true),
-    (var(Relation2) -> designated:designated_relation(Relation2) ; true),
     % Execute query
     designated:relation_key(Relation1, IDField1),
     designated:relation_key(Relation2, IDField2),
@@ -279,7 +263,7 @@ intersect((Relation1, Id1), (Relation2, Id2)) :-
     geolog:iterate(Result, [Id1, Id2]).
 
 %------------------------------------------------------------------------------
-% intersect_relational(+Table1, +Table2, -Output, +[FieldName1, FieldName2]):
+% intersect_relational(+Relation1, +Relation2, -Output, +[FieldName1, FieldName2]):
 %------------------------------------------------------------------------------
 % Returns as output a relationship-relation with all pair of IDs that intersect.
 
@@ -324,7 +308,7 @@ intersect_relational(Relation1, Relation2, Output, [FieldName1, FieldName2]) :-
     create_index(Output, "id_2").
 
 %------------------------------------------------------------------------------
-% minus_table(+Input1, +Input2, -Output):
+% minus_table(+Relation1, +Relation2, -Output):
 %------------------------------------------------------------------------------
 % True if Output is Relation1 minus Relation2.
 
@@ -355,7 +339,7 @@ minus_relational(Relation1, Relation2, Output) :-
     arcpy_util:sql_query_result(InsertQuery).
 
 %------------------------------------------------------------------------------
-% project_id_relational(+Input, +Fields, -Output):
+% project_id_relational(+Relation, +Fields, -Output):
 %------------------------------------------------------------------------------
 % True if Output is Relation projected onto Fields.
 
@@ -501,8 +485,6 @@ join_relational(Relation1, Relation2, Output, Attribute, Fields) :-
 % Iterates over all rows of a relation
 
 iterate_relational(Relation, Row) :-
-    % Check input
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % Execute query
     atomics_to_string([
         "SELECT *  FROM ",
@@ -519,8 +501,6 @@ iterate_relational(Relation, Row) :-
 iterate_ids(Relation, Id) :-
     % test input
     var(Id),
-    % get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % Execute query
     designated:relation_key(Relation, IDField),
     atomics_to_string([
@@ -542,8 +522,6 @@ iterate_ids_random(Relation, Size, Id) :-
     % test input
     nonvar(Size),
     var(Id),
-    % get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % Execute query
     designated:relation_key(Relation, IDField),
     atomics_to_string([
@@ -573,9 +551,7 @@ random_relation(Relation, Size, Output) :-
     % test input
     nonvar(Size),
     var(Output),
-    % get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
-     % Execute query
+    % Execute query
     arcpy_util:uuid(UUID),
     atomics_to_string(["tmp_", UUID], Output),
     atomics_to_string([
@@ -629,9 +605,9 @@ random_relation(Relation, Size, Output) :-
 %    arcpy_util:sql_query_result(ShapeIndexQuery).
 
 %------------------------------------------------------------------------------
-% filter_by_relationship(+Input, +Relation, +Attribute, -Output):
+% filter_by_relationship(+Relation, +Relationship, +Attribute, -Output):
 %------------------------------------------------------------------------------
-% Filetrs Relation according to the IDs in Relationship. Attribute must point to a field in Relationship.
+% Filters Relation according to the IDs in Relationship. Attribute must point to a field in Relationship.
 
 filter_by_relationship(Relation, Relationship, Attribute, Output) :-
     % Check input
@@ -731,8 +707,6 @@ filter_by_relationship(Relation, Relationship, Attribute, Output) :-
 select_where_query(Constraint, Relation, Id) :-
     % Check input
     var(Id),
-    % check/get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % Execute query
     designated:relation_key(Relation, IDField),
     atomics_to_string([
@@ -749,8 +723,6 @@ select_where_query(Constraint, Relation, Id) :-
 select_where_query(Constraint, Relation, Id) :-
     % Check input
     nonvar(Id),
-    % check/get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % Execute query
     designated:relation_key(Relation, IDField),
     atomics_to_string([
@@ -773,8 +745,6 @@ select_where_query(Constraint, Relation, Id) :-
 % Is true if Output is the relation that contains element of Relation that satisfy Constraint.
 
 select_where_query_relational(Constraint, Relation, Output) :-
-    % check/get table
-    (var(Relation) -> designated:designated_relation(Relation) ; true),
     % check output variable
     var(Output),
     % Execute query
@@ -831,7 +801,7 @@ materialize(Relation, FeatureClass) :-
     % Copy table to feature class
     designated:db_connection_path(ConnectionPath),
     atomics_to_string([ConnectionPath, "/", Temp], TempFullPath),
-    arcpy_core:arcpy_CopyFeatures_management([TempFullPath, FeatureClass]),
+    arcpy_core:'arcpy.CopyFeatures_management'([TempFullPath, FeatureClass]),
     designated:relation_key(Relation, IDField),
     assertz(designated:relation_key(FeatureClass, IDField)),
     % drop table

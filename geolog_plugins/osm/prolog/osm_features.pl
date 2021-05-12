@@ -1,4 +1,4 @@
-:- module(osm, [entity_type/2, entity_type_relational/3, osm_constraint/2]).
+:- module(osm, [entity_type/2, entity_type_relational/3]).
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % OSM Features
@@ -17,7 +17,7 @@ entity_type(OSMType, (Relation, Id)) :-
     % get where-clause / feature-type
     osm_constraint(OSMType, Constraint),
     % execute query
-    select_where_query(Constraint, Relation, Id) .
+    postgres:select_where_query(Constraint, Relation, Id) .
 
 %------------------------------------------------------------------------------
 % entity_type_relational(?OSMType, ?Relation, -Output) :
@@ -28,7 +28,7 @@ entity_type_relational(OSMType, Relation, Output) :-
     % get where-clause / feature-type
     osm_constraint(OSMType, Constraint),
     % execute query
-    select_where_query_relational(Constraint, Relation, Output).
+    postgres:select_where_query_relational(Constraint, Relation, Output).
 
 %------------------------------------------------------------------------------
 % osm_constraint(?FeatureType, ?WhereClause):
