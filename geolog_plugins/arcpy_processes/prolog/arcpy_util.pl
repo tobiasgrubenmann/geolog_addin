@@ -1,5 +1,6 @@
 :- module(arcpy_util, [sql_query_result/1, sql_query_result/2, sql_query_iterator/2,
-                       extract_selection/2, add_layer/2]).
+                       extract_selection/2, add_layer/2, new_in_memory_fc_name/1,
+                       layer_name/2]).
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Arcpy Util Predicates
@@ -102,32 +103,32 @@ extract_selection(Layer, Selection) :-
 %------------------------------------------------------------------------------
 % Returns a new unique name for an in-memory feature class.
 
-%new_in_memory_fc_name(Name) :-
-%    arcpy_core:uuid(UUID),
-%    atomics_to_string(["in_memory/fc_", UUID], Name).
+new_in_memory_fc_name(Name) :-
+    arcpy_util:uuid(UUID),
+    atomics_to_string(["in_memory/fc_", UUID], Name).
 
 %------------------------------------------------------------------------------
 % layer_name(?Name, -LayerName)
 %------------------------------------------------------------------------------
 % Returns Layername that is unique.
 
-%layer_name(Name, LayerName) :-
-%    var(Name),
-%    arcpy_util:uuid(UUID),
-%    atomics_to_string(["layer_", UUID], LayerName).
-%
-%layer_name(Name, LayerName) :-
-%    nonvar(Name),
-%    arcpy_core:'arcpy.Exists'([LayerName], Exist),
-%    Exist = false,
-%    LayerName = Name.
-%
-%layer_name(Name, LayerName) :-
-%    nonvar(Name),
-%    arcpy_core:'arcpy.Exists'([LayerName], Exist),
-%    Exist = true,
-%    arcpy_core:uuid(UUID),
-%    atomics_to_string([Name, "_", UUID], LayerName).
+layer_name(Name, LayerName) :-
+    var(Name),
+    arcpy_util:uuid(UUID),
+    atomics_to_string(["layer_", UUID], LayerName).
+
+layer_name(Name, LayerName) :-
+    nonvar(Name),
+    arcpy_core:'arcpy.Exists'([LayerName], Exist),
+    Exist = false,
+    LayerName = Name.
+
+layer_name(Name, LayerName) :-
+    nonvar(Name),
+    arcpy_core:'arcpy.Exists'([LayerName], Exist),
+    Exist = true,
+    arcpy_core:uuid(UUID),
+    atomics_to_string([Name, "_", UUID], LayerName).
 
 %------------------------------------------------------------------------------
 % add_layer(+Features, +LayerName):

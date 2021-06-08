@@ -2,11 +2,11 @@
     <Name>Geolog</Name>
     <AddInID>{78b6ad47-b7b3-4388-b96f-98273d9f1bb3}</AddInID>
     <Description>Add-In for using Prolog in ArcMap</Description>
-    <Version>0.2-snapshot</Version>
+    <Version>0.2-SNAPSHOT</Version>
     <Image />
     <Author>Tobias Grubenmann</Author>
     <Company>University of Bonn</Company>
-    <Date>May 12, 2021</Date>
+    <Date>June 08, 2021</Date>
     <Targets>
         <Target name="Desktop" version="10.3" />
     </Targets>

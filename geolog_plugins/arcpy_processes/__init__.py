@@ -70,7 +70,7 @@ for (f, location) in function_set:
     # one additional argument for the return value
     min_arity = 1
     max_arity = 2
-    name = "'" + location + "." + f.func_name + "'"
+    name = location + "." + f.func_name
     # use ESRI toolname, if available
     if "__esri_toolname__" in f.func_dict:
         name = location + "." + f.func_dict["__esri_toolname__"]
